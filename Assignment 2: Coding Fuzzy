@@ -1,0 +1,63 @@
+#Assignment 2: Coding: Create 3 membership functions to do a fuzzification of room temperature as shown in the figure
+#AZHAR BASIS PANRITA / 6022251060
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+def triangle(x, a, b, c, d, e):
+    """
+    Calculates the membership value for a triangular fuzzy function using if/elif/else.
+
+    Parameters:
+    x (float or np.array): The input value(s).
+    a (float): The left-most X point, paired with y value d.
+    b (float): The middle X point, paired with Y value of 1.
+    c (float): The right-most X point, paired with Y value e.
+    d (float): The y-value at point a.
+    e (float): The y-value at point c.
+
+    Returns:
+    float or np.array: The membership value(s).
+    """
+
+    if x < a:
+        return d
+    elif a <= x <= b:
+        return (x - a) / (b - a)
+    elif b < x <= c:
+        return (c - x) / (c - b)
+    elif x > c:
+        return e
+    else:
+        return 0
+
+#Definisikan Arraynya
+suhu_air_array = np.linspace(-10, 50, 1000) #tempat untuk input (sumbu X)
+fuzzyfied_as_dingin = np.zeros_like(suhu_air_array) #tempat untuk output (sumbu Y)
+fuzzyfied_as_sedang = np.zeros_like(suhu_air_array) #tempat untuk output (sumbu Y)
+fuzzyfied_as_panas = np.zeros_like(suhu_air_array) #tempat untuk output (sumbu Y)
+
+#Evaluasi satu persatu elemen suhu air
+for i, val in enumerate(suhu_air_array):
+    fuzzyfied_as_dingin[i] = triangle(val, 0, 0, 25, 1, 0)
+    fuzzyfied_as_sedang[i] = triangle(val, 15, 25, 35, 0, 0)
+    fuzzyfied_as_panas[i] = triangle(val, 25, 35, 0, 0, 1)
+
+#Grafik (jika ingin menampilkan hanya 1 grafik beri tanda # di grafik yang tidak ingin di tampilkan)
+plt.figure(figsize=(10, 5))
+plt.plot(suhu_air_array, fuzzyfied_as_dingin, label = 'suhu air minum dingin', color='red')
+plt.plot(suhu_air_array, fuzzyfied_as_sedang, label = 'suhu air minum sedang', color='green' )
+plt.plot(suhu_air_array, fuzzyfied_as_panas, label = 'suhu air minum panas', color='blue')
+
+#Keterangan pada grafik dan uji suhu
+uji_suhu = 32.5 #untuk melakukan pengujian ubah angka ini
+plt.axvline(uji_suhu, color='orange', linestyle='--')
+plt.legend()
+plt.xlabel('Temperatur t')
+plt.ylabel(r'$\mu_(t)$')
+
+#Penjelasan uji suhu
+print(f"Temperatur {uji_suhu}°C adalah "
+      f"{triangle(uji_suhu,25,35,0,0,1)*100:.0f}% Panas, "
+      f"{triangle(uji_suhu,15,25,35,0,0)*100:.0f}% Sedang, "
+      f"{triangle(uji_suhu,0,0,25,1,0)*100:.0f}% Dingin")
